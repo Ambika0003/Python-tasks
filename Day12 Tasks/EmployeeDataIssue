@@ -1,0 +1,16 @@
+import numpy as np
+import copy
+
+employees= [[101, "A"], [102, "B"], [103, "C"]]
+b=copy.copy(employees)
+
+b[0][1]= "Z"
+ 
+print(employees)
+print(b)
+
+employees= [[101, "A"], [102, "B"], [103, "C"]]
+b=copy.deepcopy(employees)
+b[0][1]="Z"
+print(employees)
+print(b)
