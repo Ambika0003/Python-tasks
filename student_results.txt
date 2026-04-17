@@ -1,0 +1,8 @@
+Students scoring above 50:
+Ravi: 90
+John: 40
+Ash: 75
+Ambi: 85
+Sas: 50
+
+Average Marks: 68.0
