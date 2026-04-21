@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 #Scenario 1: Basic Data Loading & Cleaning
 
 #Load the dataset into a Pandas DataFrame.
-df=pd.read_csv(r'C:\Users\Windows\Downloads\Python Practice\Analytics\Project 1\railway_gauges.csv')
+df=pd.read_csv(r"C:\Users\Windows\Downloads\railway_gauges 1.csv")
 ##Display the first 5 rows and column names. 
 print("the first 5 rows and column of the dataset is:\n",df.head())
 
