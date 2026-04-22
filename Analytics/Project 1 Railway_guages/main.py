@@ -17,7 +17,7 @@ from matplotlib import pyplot as plt
 
 #Load the dataset into a Pandas DataFrame.
 df=pd.read_csv(r"C:\Users\Windows\Downloads\railway_gauges 1.csv")
-'''
+
 ##Display the first 5 rows and column names. 
 print("the first 5 rows and column of the dataset is:\n",df.head())
 
@@ -56,7 +56,7 @@ if df["Total"].iloc[-1]>df["Total"].iloc[0]:
     print("Trend is incresing")
 else:
     print("Trend is decresing")
-'''
+
 #=======================================================================
 #Scenario 3: Filtering + Bar Chart
 #======================================================================
@@ -94,7 +94,7 @@ print("The dominant gauge in recent years is:",dominant)
 #=============================================================================
 #Scenario 4: Feature Engineering + Pie Chart
 #==============================================================================
-'''
+
 #. Calculate total sum of each gauge across all years. 
 Total=df[["Broad Gauge","Metre Gauge","Narrow Gauge"]].sum()
 
@@ -174,7 +174,7 @@ if bg and mg and ng:
     print("Conclusion: Railway system shifting towards a single dominant gauge")
 else:
     print("Conculsion: No clear shift towards a single dominant gauge")
-'''
+
  
 
 
