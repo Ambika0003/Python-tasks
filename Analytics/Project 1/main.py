@@ -211,3 +211,4 @@ if bg and mg and ng:
     print("Conclusion: Railway system shifting towards a single dominant gauge")
 else:
     print("Conculsion: No clear shift towards a single dominant gauge")
+
