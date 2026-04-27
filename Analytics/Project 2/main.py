@@ -113,7 +113,7 @@ plt.bar(platform_names, game_counts)
 # 6: Rotate x-axis labels
 plt.xticks(rotation=45)
 
-# Add title and labels (good practice)
+# Add title and labels 
 plt.title("Top 10 Platforms by High-Rated Games")
 plt.xlabel("Platform")
 plt.ylabel("Number of Games")
