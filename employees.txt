@@ -1,4 +1,0 @@
---- Employee Data ---
-ID: 10323, Name: ambika, Salary: 3000.0
-ID: 123344, Name: ashhwini, Salary: 7888.0
-ID: 144576, Name: ravi, Salary: 4567.0
