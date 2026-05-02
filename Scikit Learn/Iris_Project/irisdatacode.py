@@ -73,7 +73,7 @@ X_test = sc.transform(X_test)
 
 # Print few scaled values
 '''
-for i in range(10):
+for i in range(10): 
     print(X_train[i])
 
 print('-'*80)
