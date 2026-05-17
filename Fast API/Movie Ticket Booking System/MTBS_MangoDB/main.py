@@ -53,21 +53,13 @@ connect(
 class MovieDB(Document):
 
     movie_id = IntField(primary_key=True)
-
     movie_name = StringField(required=True)
-
     theater_name = StringField(required=True)
-
     show_time = StringField(required=True)
-
     ticket_price = FloatField(required=True)
-
     available_seats = IntField(required=True)
-
     language = StringField(required=True)
-
     rating = FloatField(required=True)
-
     meta = {
         "collection": "movies"
     }
@@ -76,17 +68,11 @@ class MovieDB(Document):
 class BookingDB(Document):
 
     booking_id = IntField(primary_key=True)
-
     movie_id = IntField(required=True)
-
     customer_name = StringField(required=True)
-
     tickets = IntField(required=True)
-
     total_amount = FloatField(required=True)
-
     booking_status = StringField(default="Booked")
-
     meta = {
         "collection": "bookings"
     }
@@ -98,28 +84,19 @@ class BookingDB(Document):
 class Movie(BaseModel):
 
     movie_id: int
-
     movie_name: str
-
     theater_name: str
-
     show_time: str
-
     ticket_price: float
-
     available_seats: int
-
     language: str
-
     rating: float
 
 
 class Booking(BaseModel):
 
     booking_id: int
-
     customer_name: str
-
     tickets: int
 
 # ============================================================
