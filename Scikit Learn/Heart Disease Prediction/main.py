@@ -6,7 +6,7 @@ import seaborn as sns
 # Load Dataset
 # ==========================================
 
-df = pd.read_csv(r"C:\Users\Windows\Downloads\Heart.csv")
+df = pd.read_csv(r"C:\Users\Windows\OneDrive\Documents\datasets\Heart.csv")
 
 print("First 5 Rows:")
 print(df.head())
@@ -95,7 +95,7 @@ from sklearn.metrics import (
 # ==========================================
 
 from sklearn.linear_model import LogisticRegression
-lr_model = LogisticRegression(max_iter=5000)
+lr_model = LogisticRegression(max_iter=10000)
 lr_model.fit(X_train, y_train)
 lr_pred = lr_model.predict(X_test)
 lr_accuracy = accuracy_score(y_test, lr_pred)

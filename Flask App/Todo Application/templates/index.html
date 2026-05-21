@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+
+    <style>
+        li {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .delete-btn {
+            color: white;
+            background: red;
+            border: none;
+            padding: 2px 8px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .delete-btn:hover {
+            background: darkred;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>My Todo List</h1>
+
+    <a href="{{ url_for('add_task') }}">
+    <button>Add Task</button>
+</a>
+
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task }}
+
+                <a href="{{ url_for('delete_task', index=loop.index0) }}">
+                    <button class="delete-btn">X</button>
+                </a>
+
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
