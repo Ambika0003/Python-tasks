@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}CineWave | Discover Movies{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero fade-in-up">
+    <div class="hero-content">
+        <div class="hero-tagline">Experience Cinema in Comfort</div>
+        <h1 class="hero-title">Book Tickets for Your Favorite Movies</h1>
+        <p class="hero-desc">Discover the latest blockbusters, select premium recliner seats, and book tickets instantly with the premium ticketing client.</p>
+    </div>
+</section>
+
+<!-- Movies Section -->
+<section class="movies-section fade-in-up" style="animation-delay: 0.15s;">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Now Showing</h2>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Select a movie below to see showtimes and book seats.</p>
+        </div>
+        
+        <!-- Quick search & filter -->
+        <div class="glass-card" style="padding: 0.5rem 1rem; border-radius: 12px; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+            <input type="text" id="movie-search" placeholder="Search movies..." style="background: transparent; border: none; color: #fff; font-family: var(--font-sans); outline: none; font-size: 0.9rem; width: 180px;">
+        </div>
+    </div>
+
+    <!-- Movies Grid -->
+    <div class="movies-grid" id="movies-container">
+        {% for movie in movies %}
+            <div class="movie-card" data-title="{{ movie.title | lower }}" data-genre="{{ movie.genre | lower }}">
+                <div class="movie-poster-wrapper">
+                    {% if movie.poster_url %}
+                        <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster" loading="lazy">
+                    {% else %}
+                        <div class="movie-poster" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); height: 100%;">
+                            <i class="fa-solid fa-image" style="font-size: 3rem; opacity: 0.5;"></i>
+                        </div>
+                    {% endif %}
+                    <span class="movie-rating-badge">{{ movie.rating }}</span>
+                </div>
+                
+                <div class="movie-info">
+                    <span class="movie-genre">{{ movie.genre }}</span>
+                    <h3 class="movie-card-title">{{ movie.title }}</h3>
+                    
+                    <div class="movie-meta">
+                        <div class="movie-meta-item">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>{{ movie.duration_minutes }} Mins</span>
+                        </div>
+                        <div class="movie-meta-item">
+                            <i class="fa-regular fa-calendar"></i>
+                            <span>{{ movie.release_date.strftime('%b %d, %Y') if movie.release_date else 'N/A' }}</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('movie_details', movie_id=movie.id) }}" class="movie-book-btn">
+                        Get Showtimes
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="glass-card text-center" style="grid-column: 1 / -1; padding: 4rem 2rem;">
+                <i class="fa-solid fa-film" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1.5rem;"></i>
+                <h3>No movies currently showing.</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Check back later or add new movies via the Admin Control Panel.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('movie-search');
+        const moviesContainer = document.getElementById('movies-container');
+        const cards = moviesContainer.querySelectorAll('.movie-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title');
+                const genre = card.getAttribute('data-genre');
+                
+                if (title.includes(query) || genre.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

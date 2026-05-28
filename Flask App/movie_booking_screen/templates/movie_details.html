@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}CineWave | {{ movie.title }}{% endblock %}
+
+{% block content %}
+<!-- Movie Detail Header Section -->
+<div class="movie-detail-hero">
+    {% if movie.poster_url %}
+        <img src="{{ movie.poster_url }}" alt="" class="movie-detail-bg">
+    {% endif %}
+    <div class="movie-detail-overlay"></div>
+    
+    <div class="movie-detail-container fade-in-up">
+        <div class="movie-poster-large">
+            {% if movie.poster_url %}
+                <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+            {% else %}
+                <div style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); height: 100%;">
+                    <i class="fa-solid fa-image" style="font-size: 5rem; opacity: 0.5;"></i>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="movie-detail-content">
+            <span class="movie-genre" style="font-size: 0.95rem; margin-bottom: 1rem;">{{ movie.genre }}</span>
+            <h1 class="movie-detail-title">{{ movie.title }}</h1>
+            
+            <div class="movie-detail-meta">
+                <span><i class="fa-regular fa-clock" style="color: var(--primary); margin-right: 0.3rem;"></i> <strong>{{ movie.duration_minutes }} Mins</strong></span>
+                <span><i class="fa-regular fa-star" style="color: var(--secondary); margin-right: 0.3rem;"></i> Rating: <strong>{{ movie.rating }}</strong></span>
+                <span><i class="fa-regular fa-calendar-alt" style="color: var(--color-standard); margin-right: 0.3rem;"></i> Released: <strong>{{ movie.release_date.strftime('%B %d, %Y') if movie.release_date else 'N/A' }}</strong></span>
+            </div>
+            
+            <p class="movie-detail-desc">{{ movie.description }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Showtimes Section -->
+<section class="showtimes-section fade-in-up" style="animation-delay: 0.15s;">
+    <h2 class="section-title" style="margin-bottom: 2rem;">Available Showtimes</h2>
+    
+    <!-- Date Navigation Tabs -->
+    <div class="date-tabs">
+        {% for date_key, label_day, label_date in dates %}
+            <div class="date-tab {% if loop.first %}active{% endif %}" data-date="{{ date_key }}">
+                <div class="date-tab-day">{{ label_day }}</div>
+                <div class="date-tab-date">{{ label_date }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Showtimes by Screen -->
+    <div id="showtimes-by-date-container">
+        {% for date_key, label_day, label_date in dates %}
+            <div class="date-showtimes-panel" id="panel-{{ date_key }}" style="{% if not loop.first %}display: none;{% endif %}">
+                
+                {% set date_showtimes = showtimes_by_date[date_key] %}
+                {% if date_showtimes %}
+                    <!-- Group showtimes by screen -->
+                    {% set screens_grouped = date_showtimes | groupby('screen_id') %}
+                    <div class="showtimes-grid">
+                        {% for screen_id, st_list in screens_grouped %}
+                            <div class="screen-showtimes-card">
+                                <h3 class="screen-name">
+                                    <i class="fa-solid fa-chalkboard"></i> {{ st_list[0].screen_name }}
+                                </h3>
+                                <div class="showtime-pills">
+                                    {% for st in st_list %}
+                                        <a href="{{ url_for('book_seats', showtime_id=st.id) }}" class="showtime-pill">
+                                            <span class="showtime-time">{{ st.start_time.strftime('%I:%M %p') }}</span>
+                                            <span class="showtime-price">From ₹{{ "%.2f"|format(st.ticket_price) }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="glass-card text-center" style="padding: 3rem 1.5rem;">
+                        <i class="fa-regular fa-calendar-times" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--text-muted);">No showtimes scheduled for this date.</p>
+                    </div>
+                {% endif %}
+                
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.date-tab');
+        const panels = document.querySelectorAll('.date-showtimes-panel');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active classes
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.style.display = 'none');
+                
+                // Set current active
+                tab.classList.add('active');
+                const targetDate = tab.dataset.date;
+                const activePanel = document.getElementById(`panel-${targetDate}`);
+                if (activePanel) {
+                    activePanel.style.display = 'block';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}CineWave | Booking Confirmed!{% endblock %}
+
+{% block content %}
+<div class="ticket-confirmation-container">
+    <div class="glass-card text-center" style="margin-bottom: 2rem; border-color: rgba(16, 185, 129, 0.3);">
+        <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;"></i>
+        <h2>Booking Successful!</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Your seats have been successfully reserved. Here is your digital ticket.</p>
+    </div>
+    
+    <!-- Digital Ticket Stub -->
+    <div class="ticket-stub">
+        <div class="ticket-main">
+            <div class="ticket-header">
+                <span class="ticket-logo"><i class="fa-solid fa-film"></i> CINEWAVE</span>
+                <span class="ticket-status">Confirmed</span>
+            </div>
+            
+            <h3 class="ticket-movie-title">{{ movie.title }}</h3>
+            
+            <div class="ticket-details-grid">
+                <div class="ticket-detail-item">
+                    <span class="ticket-label">Screen</span>
+                    <span class="ticket-val">{{ screen.name }}</span>
+                </div>
+                <div class="ticket-detail-item">
+                    <span class="ticket-label">Show Date</span>
+                    <span class="ticket-val">{{ showtime.start_time.strftime('%A, %b %d, %Y') }}</span>
+                </div>
+                <div class="ticket-detail-item">
+                    <span class="ticket-label">Showtime</span>
+                    <span class="ticket-val">{{ showtime.start_time.strftime('%I:%M %p') }}</span>
+                </div>
+                <div class="ticket-detail-item">
+                    <span class="ticket-label">Reserved Seats</span>
+                    <span class="ticket-val" style="color: var(--secondary);">
+                        {% for ticket in tickets %}
+                            {{ ticket.row_name }}{{ ticket.col_number }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <div class="ticket-detail-item">
+                    <span class="ticket-label">Booking ID</span>
+                    <span class="ticket-val">#CW-{{ booking.id }}</span>
+                </div>
+                <div class="ticket-detail-item">
+                    <span class="ticket-label">Total Amount</span>
+                    <span class="ticket-val" style="color: var(--color-prime);">₹{{ "%.2f"|format(booking.total_amount) }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ticket-tail">
+            <div>
+                <span class="ticket-label" style="display: block;">User Account</span>
+                <span class="ticket-val" style="font-size: 0.85rem;"><i class="fa-regular fa-user"></i> {{ session.get('username') }}</span>
+            </div>
+            <div class="barcode-stub">
+                <div class="barcode-lines"></div>
+                <span class="barcode-num">CW{{ booking.id }}SH{{ showtime.id }}US{{ session.get('user_id') }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 3rem;">
+        <a href="{{ url_for('index') }}" class="nav-btn" style="padding: 0.8rem 2rem;">
+            Book More Movies
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="nav-btn" style="background: var(--bg-glass); border: 1px solid var(--border-glass); box-shadow: none; margin-left: 1rem; padding: 0.8rem 2rem;">
+            Go to My Bookings
+        </a>
+    </div>
+</div>
+{% endblock %}

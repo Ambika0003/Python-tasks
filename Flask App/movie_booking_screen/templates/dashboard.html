@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}CineWave | My Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="user-info-card">
+            <div class="user-avatar">
+                {{ session.get('username')[0] | upper }}
+            </div>
+            <div>
+                <h1 class="user-meta-name">Hello, {{ session.get('username') }}</h1>
+                <span class="user-meta-email">{{ email }}</span>
+            </div>
+        </div>
+        
+        <div>
+            <span class="badge badge-user" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                <i class="fa-solid fa-ticket-simple" style="margin-right: 0.4rem;"></i> {{ bookings | length }} Bookings
+            </span>
+        </div>
+    </div>
+    
+    <!-- Bookings List -->
+    <h2 class="section-title" style="margin-bottom: 2.5rem;">My Reservations</h2>
+    
+    <div class="bookings-list">
+        {% for b in bookings %}
+            <div class="glass-card booking-item" style="{% if b.status == 'cancelled' %}opacity: 0.6; border-color: rgba(239, 68, 68, 0.15);{% endif %}">
+                <!-- Movie Poster Thumb -->
+                <div class="booking-item-poster">
+                    {% if b.poster_url %}
+                        <img src="{{ b.poster_url }}" alt="{{ b.movie_title }}">
+                    {% else %}
+                        <div style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); height: 100%;">
+                            <i class="fa-solid fa-image" style="font-size: 1.5rem; opacity: 0.5;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Ticket details -->
+                <div class="booking-item-details">
+                    <h3 class="booking-item-title">{{ b.movie_title }}</h3>
+                    <div class="booking-item-meta">
+                        <span><i class="fa-solid fa-desktop" style="color: var(--primary);"></i> {{ b.screen_name }}</span>
+                        <span><i class="fa-regular fa-clock" style="color: var(--secondary);"></i> {{ b.start_time.strftime('%I:%M %p') }}</span>
+                        <span><i class="fa-regular fa-calendar" style="color: var(--color-standard);"></i> {{ b.start_time.strftime('%a, %b %d, %Y') }}</span>
+                    </div>
+                    <div class="booking-item-seats">
+                        <span class="ticket-label" style="font-size: 0.75rem;">Seats Reserved:</span>
+                        <strong style="color: var(--secondary); font-size: 0.95rem; margin-left: 0.3rem;">
+                            {{ b.seats_csv }}
+                        </strong>
+                    </div>
+                </div>
+                
+                <!-- Price & Cancel Action -->
+                <div class="booking-item-action">
+                    <span class="booking-price">₹{{ "%.2f"|format(b.total_amount) }}</span>
+                    
+                    {% if b.status == 'confirmed' %}
+                        <span class="badge badge-confirmed" style="margin-bottom: 0.5rem;">Confirmed</span>
+                        
+                        <!-- Check if showtime is in the future to allow cancellation -->
+                        {% if b.start_time > current_time %}
+                            <form action="{{ url_for('cancel_booking', booking_id=b.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking and get a refund?');">
+                                <button type="submit" class="cancel-btn">Cancel Booking</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge badge-cancelled">Cancelled</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="glass-card text-center" style="padding: 5rem 2rem;">
+                <i class="fa-solid fa-receipt" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1.5rem; display: block; margin-left: auto; margin-right: auto;"></i>
+                <h3>No bookings found</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">You haven't purchased any tickets yet. Explore the movies catalog and book yours today!</p>
+                <a href="{{ url_for('index') }}" class="nav-btn" style="display: inline-block; margin-top: 2rem; padding: 0.8rem 2rem;">
+                    Find Movies
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
