@@ -1,24 +1,20 @@
-# Python cache
+# Environment Variables
+.env
+
+# Python Cache
 __pycache__/
 *.pyc
 
-# Virtual environments
-.venv/
+# Virtual Environments
 venv/
-env/
+.venv/
 
-# Environment files
-.env
-
-# VS Code settings
+# VS Code
 .vscode/
 
-# Flask instance folders
-instance/
-
-# Jupyter Notebook checkpoints
+# Jupyter
 .ipynb_checkpoints/
 
-# OS files
+# System Files
 .DS_Store
 Thumbs.db
