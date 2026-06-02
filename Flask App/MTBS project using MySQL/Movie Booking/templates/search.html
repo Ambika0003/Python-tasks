@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{% if q %}Search: {{ q }}{% else %}Search{% endif %} — CineBook{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+    <div class="container">
+        <h1>Search</h1>
+        <p class="page-hero__subtitle">Find movies, theatres, languages, and showtimes</p>
+        <form class="search-page-form" action="{{ url_for('pages.search') }}" method="get" role="search">
+            <input type="search" name="q" value="{{ q }}" placeholder="Movie, theatre, city, language…" autofocus aria-label="Search">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</section>
+
+<section class="search-results">
+    <div class="container">
+        {% if not q %}
+        <p class="empty-state">Type a movie title, theatre name, city, or language to start searching.</p>
+        {% elif not has_results %}
+        <p class="empty-state">No results for <strong>{{ q }}</strong>. Try another keyword.</p>
+        {% else %}
+        <p class="search-results__summary">Results for <strong>{{ q }}</strong></p>
+
+        {% if movies %}
+        <div class="search-section">
+            <h2 class="search-section__title">Movies <span class="search-count">{{ movies|length }}</span></h2>
+            <div class="search-movie-list">
+                {% for movie in movies %}
+                <a href="{{ url_for('movies.detail', movie_id=movie.id) }}" class="search-movie-item">
+                    <img src="{{ movie_poster_src(movie.id, movie.poster_url) }}" alt="" class="search-movie-item__poster" loading="lazy">
+                    <div>
+                        <h3>{{ movie.title }}</h3>
+                        <p class="search-movie-item__meta">{{ movie.genre }} · {{ movie.duration }} min · ★ {{ movie.rating }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if theaters %}
+        <div class="search-section">
+            <h2 class="search-section__title">Theatres <span class="search-count">{{ theaters|length }}</span></h2>
+            <ul class="search-theater-list">
+                {% for t in theaters %}
+                <li class="search-theater-item">
+                    {% if t.screen_number and t.mall_name and t.city %}
+                    <strong>{{ t.screen_number }}</strong>
+                    <span>{{ t.mall_name }} · {{ t.city }}</span>
+                    {% elif t.name %}
+                    <strong>{{ t.name }}</strong>
+                    {% if t.location %}<span>{{ t.location }}</span>{% endif %}
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if showtimes %}
+        <div class="search-section">
+            <h2 class="search-section__title">Showtimes <span class="search-count">{{ showtimes|length }}</span></h2>
+            <div class="showtime-grid">
+                {% for st in showtimes %}
+                <a href="{{ url_for('booking.select_seats', showtime_id=st.id) }}" class="showtime-card">
+                    {% if st.language %}<span class="showtime-lang badge-lang">{{ st.language }}</span>{% endif %}
+                    <span class="showtime-movie">{{ st.movie_title }}</span>
+                    <span class="showtime-date">{{ st.show_date | format_date('%a, %b %d') }}</span>
+                    <span class="showtime-time">{{ st.show_time | format_time }}</span>
+                    <span class="showtime-theater">{{ st.theater }}</span>
+                    <span class="showtime-price">From {{ st.price_prime | inr }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

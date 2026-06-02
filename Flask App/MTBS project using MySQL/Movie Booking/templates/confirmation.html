@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{% if booking.status == 'cancelled' %}Booking Cancelled{% else %}Booking Confirmed{% endif %} — CineBook{% endblock %}
+
+{% block content %}
+<section class="confirmation-section">
+    <div class="container">
+        <div class="confirmation-card">
+            {% if booking.status == 'confirmed' %}
+            <div class="confirmation-icon">✓</div>
+            <h1>Booking Confirmed!</h1>
+            {% else %}
+            <div class="confirmation-icon confirmation-icon-cancelled">✕</div>
+            <h1>Booking Cancelled</h1>
+            {% endif %}
+            <p class="confirmation-id">Booking #{{ booking.id }} · <span class="badge badge-{{ booking.status }}">{{ booking.status }}</span></p>
+
+            <div class="ticket-details">
+                <img src="{{ movie_poster_src(booking.movie_id, booking.poster_url) }}" alt="{{ booking.movie_title }}" class="ticket-poster">
+                <div>
+                    <h2>{{ booking.movie_title }}</h2>
+                    <ul class="ticket-info">
+                        <li><strong>Language:</strong> {{ booking.language }}</li>
+                        <li><strong>Date:</strong> {{ booking.show_date | format_date }}</li>
+                        <li><strong>Time:</strong> {{ booking.show_time | format_time }}</li>
+                        <li><strong>Venue:</strong> {{ booking.theater }}</li>
+                        <li><strong>Seats:</strong> {{ seat_labels | join(', ') }}</li>
+                        <li><strong>Total {% if booking.status == 'confirmed' %}Paid{% else %}Was{% endif %}:</strong> {{ booking.total_amount | inr }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="confirmation-actions">
+                {% if booking.status == 'confirmed' %}
+                <form method="post" action="{{ url_for('booking.cancel_booking', booking_id=booking.id) }}" onsubmit="return confirm('Cancel this ticket?');">
+                    <button type="submit" class="btn btn-cancel">Cancel Ticket</button>
+                </form>
+                {% endif %}
+                <a href="{{ url_for('booking.my_bookings') }}" class="btn btn-outline">My Bookings</a>
+                <a href="{{ url_for('movies.index') }}" class="btn btn-primary">Browse More Movies</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

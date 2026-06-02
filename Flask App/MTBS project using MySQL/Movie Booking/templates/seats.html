@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Select Seats — {{ showtime.movie_title }}{% endblock %}
+
+{% block content %}
+<section class="seats-section">
+    <div class="container">
+        <div class="seats-header">
+            <div>
+                <h1>{{ showtime.movie_title }}</h1>
+                <p class="showtime-summary">
+                    <span class="badge-lang">{{ showtime.language }}</span>
+                    {{ showtime.show_date | format_date }} ·
+                    {{ showtime.show_time | format_time }}
+                </p>
+                <p class="showtime-venue">{{ showtime.theater }}</p>
+            </div>
+        </div>
+
+        <div class="screen-label">SCREEN</div>
+
+        <div id="seat-map" class="seat-map"
+             data-showtime-id="{{ showtime.id }}"
+             data-price-prime="{{ tier_prices.prime }}"
+             data-price-gold="{{ tier_prices.gold }}"
+             data-price-recliner="{{ tier_prices.recliner }}">
+        </div>
+
+        <div class="seat-legend">
+            <span><span class="legend-box available"></span> Available</span>
+            <span><span class="legend-box selected"></span> Selected</span>
+            <span><span class="legend-box booked"></span> Booked</span>
+        </div>
+
+        <div class="booking-bar">
+            <div class="booking-summary">
+                <span id="selected-count">0</span> seats selected ·
+                Total: <strong id="total-price">₹0</strong>
+            </div>
+            <button id="confirm-booking" class="btn btn-primary" disabled>Confirm Booking</button>
+        </div>
+    </div>
+</section>
+
+<script type="application/json" id="seats-data">{{ seats | tojson }}</script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+{% endblock %}

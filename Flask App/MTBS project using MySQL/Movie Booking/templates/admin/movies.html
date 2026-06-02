@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Manage Movies — Admin{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container">
+        <div class="admin-header-row">
+            <h1 class="section-title">Movies</h1>
+            <a href="{{ url_for('admin.movie_add') }}" class="btn btn-primary btn-sm">+ Add Movie</a>
+        </div>
+        {% include "admin/_nav.html" %}
+
+        <div class="admin-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Format / Tags</th>
+                        <th>Genre</th>
+                        <th>Duration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in movies %}
+                    <tr>
+                        <td>{{ m.title }}</td>
+                        <td>{{ 'Now Showing' if (m.status or 'now_showing') == 'now_showing' else 'Coming Soon' }}</td>
+                        <td>{{ m.format_type or '2D' }}{% if m.dolby_cinema %} · Dolby Cinema{% endif %}{% if m.dolby_audio %} · Dolby Audio{% endif %} · {{ m.certification or '—' }}</td>
+                        <td>{{ m.genre or '—' }}</td>
+                        <td>{{ m.duration }} min</td>
+                        <td class="admin-actions">
+                            <a href="{{ url_for('admin.movie_edit', movie_id=m.id) }}" class="btn btn-outline btn-sm">Edit</a>
+                            <form method="post" action="{{ url_for('admin.movie_delete', movie_id=m.id) }}" onsubmit="return confirm('Delete this movie and all its showtimes?');">
+                                <button type="submit" class="btn btn-cancel btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="empty-state">No movies yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}{% if movie %}Edit{% else %}Add{% endif %} Movie — Admin{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container">
+        <h1 class="section-title">{% if movie %}Edit Movie{% else %}Add Movie{% endif %}</h1>
+        {% include "admin/_nav.html" %}
+
+        <form method="post" class="admin-form auth-card">
+            <div class="form-group">
+                <label for="title">Title *</label>
+                <input type="text" id="title" name="title" required value="{{ movie.title if movie else '' }}">
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4">{{ movie.description if movie else '' }}</textarea>
+            </div>
+            <div class="form-group admin-image-hint">
+                <label>Movie poster (local file)</label>
+                {% if movie %}
+                <p class="admin-image-hint__path">
+                    Save your image as:<br>
+                    <code>{{ movie_poster_hint(movie.id) }}</code>
+                </p>
+                <div class="admin-image-preview">
+                    <img src="{{ movie_poster_src(movie.id, movie.poster_url) }}" alt="Poster preview">
+                </div>
+                {% else %}
+                <p class="admin-image-hint__path">After saving this movie, add <code>poster.png</code> under <code>static/images/movies/&lt;id&gt;/</code></p>
+                {% endif %}
+                <input type="hidden" name="poster_url" value="">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="duration">Duration (min) *</label>
+                    <input type="number" id="duration" name="duration" min="1" required value="{{ movie.duration if movie else 120 }}">
+                </div>
+                <div class="form-group">
+                    <label for="genre">Genre</label>
+                    <input type="text" id="genre" name="genre" value="{{ movie.genre if movie else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="rating">Rating (0–10)</label>
+                    <input type="number" id="rating" name="rating" step="0.1" min="0" max="10" value="{{ movie.rating if movie else 0 }}">
+                </div>
+            </div>
+
+            <h3 class="form-section-title">Listing &amp; format</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="status">Listing *</label>
+                    <select id="status" name="status" required>
+                        {% for s in statuses %}
+                        <option value="{{ s }}" {% if movie and movie.status == s %}selected{% elif not movie and s == 'now_showing' %}selected{% endif %}>
+                            {{ 'Now Showing' if s == 'now_showing' else 'Coming Soon' }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="format_type">Format *</label>
+                    <select id="format_type" name="format_type" required>
+                        {% for f in formats %}
+                        <option value="{{ f }}" {% if movie and movie.format_type == f %}selected{% elif not movie and f == '2D' %}selected{% endif %}>{{ f }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="certification">Certification *</label>
+                    <select id="certification" name="certification" required>
+                        {% for c in certifications %}
+                        <option value="{{ c }}" {% if movie and movie.certification == c %}selected{% elif not movie and c == 'UA16+' %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="release_date">Release date (for Coming Soon)</label>
+                    <input type="date" id="release_date" name="release_date"
+                           value="{{ movie.release_date | date_input if movie and movie.release_date else '' }}">
+                </div>
+            </div>
+            <div class="form-group form-checkboxes">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="dolby_cinema" value="1"
+                        {% if movie and movie.dolby_cinema %}checked{% elif not movie %}checked{% endif %}>
+                    Dolby Cinema
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" name="dolby_audio" value="1"
+                        {% if movie and movie.dolby_audio %}checked{% elif not movie %}checked{% endif %}>
+                    Dolby Audio
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{{ url_for('admin.movies_list') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+
+        {% if movie %}
+        <div class="admin-cast-panel auth-card">
+            <h2 class="form-section-title">Cast &amp; crew</h2>
+            <p class="admin-cast-hint">Add actors, then save a photo file on disk (no URL needed). See paths below each cast row.</p>
+
+            {% if cast %}
+            <div class="cast-admin-list">
+                {% for c in cast %}
+                <div class="cast-admin-item">
+                    <img src="{{ cast_photo_src(movie.id, c.id, c.sort_order, c.photo_url) }}" alt="" class="cast-admin-thumb">
+                    <div class="cast-admin-item__text">
+                        <strong>{{ c.actor_name }}</strong>
+                        {% if c.character_name %}<span>as {{ c.character_name }}</span>{% endif %}
+                        <code class="cast-path-hint">{{ cast_photo_hint(movie.id, c.id, c.sort_order) }}</code>
+                    </div>
+                    <form method="post" action="{{ url_for('admin.cast_delete', movie_id=movie.id, cast_id=c.id) }}" onsubmit="return confirm('Remove this cast member?');">
+                        <button type="submit" class="btn btn-cancel btn-sm">Remove</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-state admin-cast-empty">No cast added yet.</p>
+            {% endif %}
+
+            <form method="post" action="{{ url_for('admin.cast_add', movie_id=movie.id) }}" class="cast-admin-form">
+                <h3 class="cast-admin-form__title">Add cast member</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="actor_name">Real name *</label>
+                        <input type="text" id="actor_name" name="actor_name" required placeholder="e.g. Leonardo DiCaprio">
+                    </div>
+                    <div class="form-group">
+                        <label for="character_name">Character name</label>
+                        <input type="text" id="character_name" name="character_name" placeholder="e.g. Cobb">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="sort_order">Display order (use in filename)</label>
+                    <input type="number" id="sort_order" name="sort_order" min="0" value="0">
+                    <p class="admin-image-hint__path">After adding, save photo as e.g. <code>static/images/movies/{{ movie.id }}/cast/&lt;order&gt;/photo.png</code></p>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Add to cast</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}{{ movie.title }} — CineBook{% endblock %}
+
+{% block content %}
+<section class="movie-detail">
+    <div class="container">
+        <div class="detail-header">
+            <img src="{{ movie_poster_src(movie.id, movie.poster_url) }}" alt="{{ movie.title }}" class="detail-poster">
+            <div class="detail-info">
+                <h1>{{ movie.title }}</h1>
+                {% include "partials/movie_badges.html" %}
+                <div class="detail-badges">
+                    <span class="badge">{{ movie.genre }}</span>
+                    <span class="badge">{{ movie.duration }} min</span>
+                    <span class="badge badge-rating">★ {{ movie.rating }}</span>
+                    {% if is_coming_soon %}
+                    <span class="badge badge-coming">Coming Soon</span>
+                    {% endif %}
+                </div>
+                <p class="detail-description">{{ movie.description }}</p>
+                {% if is_coming_soon and movie.release_date %}
+                <p class="detail-release">Expected release: <strong>{{ movie.release_date | format_date('%B %d, %Y') }}</strong></p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if cast %}
+        <div class="cast-block">
+            <h2 class="cast-block__title">Cast</h2>
+            <p class="cast-block__subtitle">Starring</p>
+            <div class="cast-grid">
+                {% for member in cast %}
+                <article class="cast-card">
+                    <div class="cast-card__photo-wrap">
+                        <img src="{{ cast_photo_src(movie.id, member.id, member.sort_order, member.photo_url) }}"
+                             alt="{{ member.actor_name }}" class="cast-card__photo" loading="lazy"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="cast-card__placeholder" aria-hidden="true" style="display:none;">{{ member.actor_name[0] }}</div>
+                    </div>
+                    <div class="cast-card__info">
+                        <h3 class="cast-card__actor">{{ member.actor_name }}</h3>
+                        {% if member.character_name %}
+                        <p class="cast-card__role">as {{ member.character_name }}</p>
+                        {% endif %}
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if is_coming_soon %}
+        <div class="coming-soon-panel">
+            <div class="coming-soon-panel__glow" aria-hidden="true"></div>
+            <h2>Coming Soon to Theatres</h2>
+            <p>Booking opens closer to the release date. Check back soon!</p>
+            <a href="{{ url_for('movies.index') }}#coming-soon" class="btn btn-outline">More Coming Soon</a>
+        </div>
+        {% else %}
+        <div class="showtimes-block">
+            <h2>Select Showtime</h2>
+
+            {% if languages %}
+            <div class="language-block">
+                <p class="language-block__label">Available languages</p>
+                <div class="language-filter">
+                    <a href="{{ url_for('movies.detail', movie_id=movie.id) }}"
+                       class="language-chip {% if not selected_language %}active{% endif %}">All</a>
+                    {% for lang in languages %}
+                    <a href="{{ url_for('movies.detail', movie_id=movie.id, lang=lang) }}"
+                       class="language-chip {% if selected_language == lang %}active{% endif %}">{{ lang }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if showtimes %}
+            <div class="showtime-grid">
+                {% for st in showtimes %}
+                <a href="{{ url_for('booking.select_seats', showtime_id=st.id) }}" class="showtime-card">
+                    <span class="showtime-lang badge-lang">{{ st.language }}</span>
+                    <span class="showtime-date">{{ st.show_date | format_date('%a, %b %d') }}</span>
+                    <span class="showtime-time">{{ st.show_time | format_time }}</span>
+                    <span class="showtime-theater">{{ st.theater }}</span>
+                    <span class="showtime-price">From {{ st.price_prime | inr }}</span>
+                    <span class="showtime-tier-hint">Gold {{ st.price_gold | inr }} · Recliners {{ st.price_recliner | inr }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% elif languages and selected_language %}
+            <p class="empty-state">No showtimes in <strong>{{ selected_language }}</strong>. Try another language or view all.</p>
+            {% else %}
+            <p class="empty-state">No upcoming showtimes for this movie.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

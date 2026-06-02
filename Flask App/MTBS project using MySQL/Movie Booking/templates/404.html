@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Not Found — CineBook{% endblock %}
+
+{% block content %}
+<section class="error-section">
+    <div class="container">
+        <h1>404</h1>
+        <p>Page not found.</p>
+        <a href="{{ url_for('movies.index') }}" class="btn btn-primary">Go Home</a>
+    </div>
+</section>
+{% endblock %}

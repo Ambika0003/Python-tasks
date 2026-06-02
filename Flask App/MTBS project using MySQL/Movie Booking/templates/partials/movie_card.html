@@ -1,0 +1,27 @@
+{# movie, section: 'now_showing' | 'coming_soon' #}
+<article class="movie-card movie-card-cinematic movie-card--{{ section }}">
+    {% if section == 'coming_soon' %}
+    <span class="movie-ribbon">Coming Soon</span>
+    <div class="movie-card-shimmer" aria-hidden="true"></div>
+    {% else %}
+    <div class="movie-card-glow" aria-hidden="true"></div>
+    {% endif %}
+    <div class="movie-poster">
+        <img src="{{ movie_poster_src(movie.id, movie.poster_url) }}" alt="{{ movie.title }}" loading="lazy">
+        <span class="movie-rating">★ {{ movie.rating }}</span>
+        <div class="movie-poster-shine"></div>
+    </div>
+    <div class="movie-info">
+        {% include "partials/movie_badges.html" %}
+        <h3>{{ movie.title }}</h3>
+        <p class="movie-meta">{{ movie.genre }} · {{ movie.duration }} min</p>
+        {% if section == 'coming_soon' and movie.release_date %}
+        <p class="movie-release">Releases {{ movie.release_date | format_date('%b %d, %Y') }}</p>
+        {% endif %}
+        {% if section == 'now_showing' %}
+        <a href="{{ url_for('movies.detail', movie_id=movie.id) }}" class="btn btn-primary btn-block">Book Ticket</a>
+        {% else %}
+        <a href="{{ url_for('movies.detail', movie_id=movie.id) }}" class="btn btn-outline btn-block">View Details</a>
+        {% endif %}
+    </div>
+</article>

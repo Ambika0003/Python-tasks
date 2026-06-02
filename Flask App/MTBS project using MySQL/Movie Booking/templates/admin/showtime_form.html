@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{% if showtime %}Edit{% else %}Add{% endif %} Showtime — Admin{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container">
+        <h1 class="section-title">{% if showtime %}Edit Showtime{% else %}Add Showtime{% endif %}</h1>
+        {% include "admin/_nav.html" %}
+
+        <form method="post" class="admin-form auth-card">
+            <div class="form-group">
+                <label for="movie_id">Movie *</label>
+                <select id="movie_id" name="movie_id" required>
+                    <option value="">Select movie</option>
+                    {% for m in movies %}
+                    <option value="{{ m.id }}" {% if showtime and showtime.movie_id == m.id %}selected{% endif %}>{{ m.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="theater_id">Theater *</label>
+                <select id="theater_id" name="theater_id" required>
+                    <option value="">Select theater</option>
+                    {% for t in theaters %}
+                    <option value="{{ t.id }}" {% if showtime and showtime.theater_id == t.id %}selected{% endif %}>
+                        {{ t.screen_number or t.name }} · {{ t.mall_name or '—' }} · {{ t.city or t.location or '—' }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="language">Language *</label>
+                <select id="language" name="language" required>
+                    {% for lang in languages %}
+                    <option value="{{ lang }}" {% if showtime and showtime.language == lang %}selected{% elif not showtime and lang == 'Hindi' %}selected{% endif %}>{{ lang }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="show_date">Date *</label>
+                    <input type="date" id="show_date" name="show_date" required
+                           value="{{ showtime.show_date | date_input if showtime else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="show_time">Time *</label>
+                    <input type="time" id="show_time" name="show_time" required
+                           value="{{ showtime.show_time | time_input if showtime else '' }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="price_prime">Prime (₹)</label>
+                    <input type="number" id="price_prime" name="price_prime" min="0" step="1"
+                           value="{{ showtime.price_prime if showtime else 150 }}">
+                </div>
+                <div class="form-group">
+                    <label for="price_gold">Gold (₹)</label>
+                    <input type="number" id="price_gold" name="price_gold" min="0" step="1"
+                           value="{{ showtime.price_gold if showtime else 250 }}">
+                </div>
+                <div class="form-group">
+                    <label for="price_recliner">Recliners (₹)</label>
+                    <input type="number" id="price_recliner" name="price_recliner" min="0" step="1"
+                           value="{{ showtime.price_recliner if showtime else 450 }}">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{{ url_for('admin.showtimes_list') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

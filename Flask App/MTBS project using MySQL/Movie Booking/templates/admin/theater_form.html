@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{% if theater %}Edit{% else %}Add{% endif %} Theater — Admin{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container">
+        <h1 class="section-title">{% if theater %}Edit Theater{% else %}Add Theater{% endif %}</h1>
+        {% include "admin/_nav.html" %}
+
+        <form method="post" class="admin-form auth-card">
+            <div class="form-group">
+                <label for="screen_number">Screen number *</label>
+                <input type="text" id="screen_number" name="screen_number" required
+                       value="{{ theater.screen_number if theater and theater.screen_number else (theater.name if theater else '') }}"
+                       placeholder="e.g. Screen 1, Audi 2">
+            </div>
+            <div class="form-group">
+                <label for="mall_name">Theatre / mall name *</label>
+                <input type="text" id="mall_name" name="mall_name" required
+                       value="{{ theater.mall_name if theater and theater.mall_name else '' }}"
+                       placeholder="e.g. PVR Forum Mall, INOX Garuda">
+            </div>
+            <div class="form-group">
+                <label for="city">City *</label>
+                <input type="text" id="city" name="city" required
+                       value="{{ theater.city if theater and theater.city else (theater.location if theater and theater.location and theater.location not in ['Main Hall', 'Premium Wing'] else '') }}"
+                       placeholder="e.g. Bangalore, Mumbai">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{{ url_for('admin.theaters_list') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

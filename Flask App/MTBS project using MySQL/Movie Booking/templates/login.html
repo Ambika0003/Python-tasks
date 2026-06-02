@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Login — CineBook{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-card">
+            <h1>Welcome Back</h1>
+            <p class="auth-subtitle">Sign in with your email and password</p>
+            <form method="post" class="auth-form" action="{{ url_for('auth.login', next=next_url) }}">
+                <input type="hidden" name="next" value="{{ next_url }}">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required autofocus placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Log In</button>
+            </form>
+            <p class="auth-footer">Don't have an account? <a href="{{ url_for('auth.register') }}">Register</a></p>
+            <p class="auth-footer auth-admin-hint">Admin? Log in with <strong>ambikasm@gmail.com</strong>, then use <a href="{{ url_for('admin.dashboard') }}">Admin Panel</a> in the top menu (or open <a href="{{ url_for('admin.dashboard') }}">/admin</a>).</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

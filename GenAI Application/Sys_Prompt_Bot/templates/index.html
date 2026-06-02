@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Learning Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🤖 AI Learning Assistant</h1>
+
+    <div id="chat-box">
+
+        <div class="welcome" id="welcome-box">
+
+            <h2>👋 Welcome</h2>
+
+            <p>
+                Ask me anything about Python, Flask,
+                FastAPI, APIs and AI/ML.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="input-box">
+
+        <input
+            type="text"
+            id="message"
+            placeholder="Ask Python, Flask, FastAPI..."
+            autocomplete="off"
+        >
+
+        <button onclick="sendMessage()">
+            Send
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const input = document.getElementById("message");
+
+input.addEventListener("keypress", function(event){
+
+    if(event.key === "Enter"){
+        sendMessage();
+    }
+
+});
+
+async function sendMessage(){
+
+    let input = document.getElementById("message");
+
+    let message = input.value.trim();
+
+    if(message === "") return;
+
+    let chatBox = document.getElementById("chat-box");
+
+    let welcomeBox = document.getElementById("welcome-box");
+
+    if(welcomeBox){
+        welcomeBox.remove();
+    }
+
+    chatBox.innerHTML += `
+        <div class="user">
+            👤 ${message}
+        </div>
+    `;
+
+    input.value = "";
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    chatBox.innerHTML += `
+        <div class="bot" id="loading">
+            🤖 Thinking...
+        </div>
+    `;
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try{
+
+        let response = await fetch("/chat",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                message:message
+            })
+
+        });
+
+        let data = await response.json();
+
+        document.getElementById("loading").remove();
+
+        chatBox.innerHTML += `
+            <div class="bot">
+                🤖 ${data.response}
+            </div>
+        `;
+
+    }
+    catch(error){
+
+        document.getElementById("loading").remove();
+
+        chatBox.innerHTML += `
+            <div class="bot">
+                ❌ Server Error
+            </div>
+        `;
+    }
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+</script>
+
+</body>
+
+</html>

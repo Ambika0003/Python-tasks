@@ -1,0 +1,15 @@
+{# Movie feature tags: 2D, Dolby Cinema, Dolby Audio, UA16+, etc. #}
+<div class="movie-tags">
+    {% if movie.format_type %}
+    <span class="movie-tag movie-tag-format">{{ movie.format_type }}</span>
+    {% endif %}
+    {% if movie.dolby_cinema %}
+    <span class="movie-tag movie-tag-dolby-cinema">Dolby Cinema</span>
+    {% endif %}
+    {% if movie.dolby_audio %}
+    <span class="movie-tag movie-tag-dolby-audio">Dolby Audio</span>
+    {% endif %}
+    {% if movie.certification %}
+    <span class="movie-tag movie-tag-cert">{{ movie.certification }}</span>
+    {% endif %}
+</div>

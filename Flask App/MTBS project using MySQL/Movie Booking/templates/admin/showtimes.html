@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Manage Showtimes — Admin{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container">
+        <div class="admin-header-row">
+            <h1 class="section-title">Showtimes</h1>
+            <a href="{{ url_for('admin.showtime_add') }}" class="btn btn-primary btn-sm">+ Add Showtime</a>
+        </div>
+        {% include "admin/_nav.html" %}
+
+        <div class="admin-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Movie</th>
+                        <th>Language</th>
+                        <th>Theater</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Prices (P/G/R)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in showtimes %}
+                    <tr>
+                        <td>{{ s.movie_title }}</td>
+                        <td>{{ s.language or '—' }}</td>
+                        <td>{{ s.theater }}</td>
+                        <td>{{ s.show_date | format_date('%b %d, %Y') }}</td>
+                        <td>{{ s.show_time | format_time }}</td>
+                        <td>{{ s.price_prime | inr }} / {{ s.price_gold | inr }} / {{ s.price_recliner | inr }}</td>
+                        <td class="admin-actions">
+                            <a href="{{ url_for('admin.showtime_edit', showtime_id=s.id) }}" class="btn btn-outline btn-sm">Edit</a>
+                            <form method="post" action="{{ url_for('admin.showtime_delete', showtime_id=s.id) }}" onsubmit="return confirm('Delete this showtime?');">
+                                <button type="submit" class="btn btn-cancel btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" class="empty-state">No showtimes yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

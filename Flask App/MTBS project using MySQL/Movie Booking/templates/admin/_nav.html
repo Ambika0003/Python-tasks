@@ -1,0 +1,9 @@
+<nav class="admin-nav">
+    <a href="{{ url_for('admin.dashboard') }}" class="{% if active == 'dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{{ url_for('admin.movies_list') }}" class="{% if active == 'movies' %}active{% endif %}">Movies</a>
+    <a href="{{ url_for('admin.theaters_list') }}" class="{% if active == 'theaters' %}active{% endif %}">Theaters</a>
+    <a href="{{ url_for('admin.showtimes_list') }}" class="{% if active == 'showtimes' %}active{% endif %}">Showtimes</a>
+    <a href="{{ url_for('admin.revenue') }}" class="{% if active == 'revenue' %}active{% endif %}">Revenue</a>
+    <a href="{{ url_for('admin.contacts_list') }}" class="{% if active == 'contacts' %}active{% endif %}">Contact</a>
+    <a href="{{ url_for('movies.index') }}" class="admin-nav-site">← Back to site</a>
+</nav>

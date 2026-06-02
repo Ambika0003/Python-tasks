@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Movies — CineBook{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block backdrop_extra %}
+<div class="cinema-backdrop__vignette"></div>
+<div class="cinema-backdrop__grain"></div>
+<div class="cinema-backdrop__glow cinema-backdrop__glow--left"></div>
+<div class="cinema-backdrop__glow cinema-backdrop__glow--right"></div>
+<div class="cinema-backdrop__particles">
+    <span></span><span></span><span></span><span></span><span></span>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="hero hero-cinematic">
+    <div class="hero-lights" aria-hidden="true"></div>
+    <div class="container hero-inner">
+        <span class="hero-badge">CineBook</span>
+        <h1>Book Your Next<br><span class="hero-accent">Movie Experience</span></h1>
+        <p class="hero-tagline">Step into the dark. Pick your seats. Own the night.</p>
+        <div class="hero-features">
+            <span>2D · Dolby · IMAX</span>
+            <span>Prime · Gold · Recliners</span>
+            <span>Instant booking</span>
+        </div>
+        <a href="#now-showing" class="btn btn-primary hero-cta">Now Showing</a>
+    </div>
+    <div class="hero-divider" aria-hidden="true">
+        <span class="hero-divider__line"></span>
+        <span class="hero-divider__diamond"></span>
+        <span class="hero-divider__line"></span>
+    </div>
+</section>
+
+<section class="movies-section movies-section-cinematic movies-section--now-showing" id="now-showing">
+    <div class="container">
+        <div class="section-header section-header--live">
+            <span class="section-live-dot" aria-hidden="true"></span>
+            <div>
+                <p class="section-eyebrow">Book tickets</p>
+                <h2 class="section-title">Now Showing</h2>
+            </div>
+        </div>
+        <div class="movie-grid">
+            {% for movie in now_showing %}
+            {% with section='now_showing' %}
+            {% include "partials/movie_card.html" %}
+            {% endwith %}
+            {% else %}
+            <p class="empty-state">No movies showing right now. Check back soon!</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="movies-section movies-section-cinematic movies-section--coming-soon" id="coming-soon">
+    <div class="container">
+        <div class="section-header section-header--soon">
+            <span class="section-soon-icon" aria-hidden="true">✦</span>
+            <div>
+                <p class="section-eyebrow section-eyebrow--soon">Up next</p>
+                <h2 class="section-title section-title--soon">Coming Soon</h2>
+            </div>
+        </div>
+        <div class="movie-grid movie-grid--coming">
+            {% for movie in coming_soon %}
+            {% with section='coming_soon' %}
+            {% include "partials/movie_card.html" %}
+            {% endwith %}
+            {% else %}
+            <p class="empty-state">No upcoming releases listed yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

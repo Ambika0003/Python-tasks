@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Bookings — CineBook{% endblock %}
+
+{% block content %}
+<section class="bookings-section">
+    <div class="container">
+        <h1 class="section-title">My Bookings</h1>
+        {% if bookings %}
+        <div class="bookings-list">
+            {% for b in bookings %}
+            <article class="booking-item">
+                <div class="booking-item-main">
+                    <h3>{{ b.movie_title }}</h3>
+                    <p>
+                        <span class="badge-lang">{{ b.language }}</span>
+                        {{ b.show_date | format_date('%b %d, %Y') }} · {{ b.show_time | format_time }}
+                    </p>
+                    <p class="booking-meta">{{ b.theater }}</p>
+                    <p class="booking-meta">Booked on {{ b.booking_date | format_date('%b %d, %Y') }} at {{ b.booking_date | format_time }}</p>
+                </div>
+                <div class="booking-item-side">
+                    <span class="booking-amount">{{ b.total_amount | inr }}</span>
+                    <span class="badge badge-{{ b.status }}">{{ b.status }}</span>
+                    <a href="{{ url_for('booking.confirmation', booking_id=b.id) }}" class="btn btn-outline btn-sm">View</a>
+                    {% if b.status == 'confirmed' %}
+                    <form method="post" action="{{ url_for('booking.cancel_booking', booking_id=b.id) }}" class="cancel-form" onsubmit="return confirm('Cancel this ticket? Seats will be released.');">
+                        <button type="submit" class="btn btn-cancel btn-sm">Cancel Ticket</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state">You have no bookings yet. <a href="{{ url_for('movies.index') }}">Browse movies</a></p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel — CineBook{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container">
+        <h1 class="section-title">Admin Panel</h1>
+        {% include "admin/_nav.html" %}
+
+        <div class="admin-stats">
+            <article class="stat-card stat-card-primary">
+                <span class="stat-label">Movies</span>
+                <span class="stat-value">{{ stats.movies }}</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Theaters</span>
+                <span class="stat-value">{{ stats.theaters }}</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Showtimes</span>
+                <span class="stat-value">{{ stats.showtimes }}</span>
+            </article>
+            <article class="stat-card stat-card-primary">
+                <span class="stat-label">Revenue</span>
+                <span class="stat-value">{{ stats.revenue | inr }}</span>
+            </article>
+        </div>
+
+        <div class="admin-quick-links">
+            <a href="{{ url_for('admin.movie_add') }}" class="admin-card-link">+ Add Movie</a>
+            <a href="{{ url_for('admin.theater_add') }}" class="admin-card-link">+ Add Theater</a>
+            <a href="{{ url_for('admin.showtime_add') }}" class="admin-card-link">+ Add Showtime</a>
+            <a href="{{ url_for('admin.revenue') }}" class="admin-card-link">View Revenue</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

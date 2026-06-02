@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Manage Theaters — Admin{% endblock %}
+
+{% block content %}
+<section class="admin-section">
+    <div class="container">
+        <div class="admin-header-row">
+            <h1 class="section-title">Theaters</h1>
+            <a href="{{ url_for('admin.theater_add') }}" class="btn btn-primary btn-sm">+ Add Theater</a>
+        </div>
+        {% include "admin/_nav.html" %}
+
+        <div class="admin-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Screen</th>
+                        <th>Theatre / Mall</th>
+                        <th>City</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in theaters %}
+                    <tr>
+                        <td>{{ t.screen_number or t.name or '—' }}</td>
+                        <td>{{ t.mall_name or '—' }}</td>
+                        <td>{{ t.city or t.location or '—' }}</td>
+                        <td class="admin-actions">
+                            <a href="{{ url_for('admin.theater_edit', theater_id=t.id) }}" class="btn btn-outline btn-sm">Edit</a>
+                            <form method="post" action="{{ url_for('admin.theater_delete', theater_id=t.id) }}" onsubmit="return confirm('Delete this theater?');">
+                                <button type="submit" class="btn btn-cancel btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" class="empty-state">No theaters yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
